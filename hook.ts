@@ -60,21 +60,20 @@ export async function tryServerAction<T>(
   action: (...args: any[]) => StandardResponse<T>,
   ...args: any[]
 ): Promise<T | undefined> {
-
-    try {
-      const result = await action(...args);
-      if (result.error) {
-        throw result.error;
-      }
-      return result.data;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description:
-          error.frontendMessage ||
-          "An unknown error occurred, please check your internet and try again.",
-        variant: "destructive",
-      });
-      return undefined;
+  try {
+    const result = await action(...args);
+    if (result.error) {
+      throw result.error;
     }
+    return result.data;
+  } catch (error) {
+    toast({
+      title: "Error",
+      description:
+        error.frontendMessage ||
+        "An unknown error occurred, please check your internet and try again.",
+      variant: "destructive",
+    });
+    return undefined;
+  }
 }
