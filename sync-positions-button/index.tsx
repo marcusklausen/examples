@@ -1,16 +1,17 @@
-'use client';
+"use client";
 
-import { ChevronDown, Loader2 } from 'lucide-react';
-import { useTransition } from 'react';
-import { Button } from '@/components/ui/button';
+import { ChevronDown, Loader2 } from "lucide-react";
+import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useToast } from '@/components/ui/use-toast';
-import { syncPositionsAction } from './actions.server';
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
+import { tryServerAction } from "@/utils/helpers";
+import { syncPositionsAction } from "./actions.server";
 
 export function SyncTradesButton({
   favoriteSymbols,
@@ -21,14 +22,13 @@ export function SyncTradesButton({
   const { toast } = useToast();
 
   const handleSync = async (symbol: string) => {
-    startTransition(async () => {
-      const { data, error } = await syncPositionsAction(symbol);
-      toast({
-        title: data?.status === 'success' ? 'Synced' : 'Error',
-        variant: data?.status === 'success' ? 'default' : 'destructive',
-        description: error
-          ? error.frontendMessage
-          : `Your ${symbol} trades have been synced`,
+    startTransition(() => {
+      tryServerAction(() => syncPositionsAction(symbol)).then(() => {
+        toast({
+          title: "Synced",
+          variant: "default",
+          description: `Your ${symbol} trades have been synced`,
+        });
       });
     });
   };
